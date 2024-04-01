@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use super::Device;
 
 const RAM_SIZE: usize = 0xFFFF + 1;
@@ -22,5 +24,8 @@ impl Device for RAM {
 
     fn write(&mut self, address: u16, data: u8) {
         self.data[address as usize] = data;
+        // TODO: For debugging, only when memory is written, display it. This is how Ben did it in his video with LEDs
+        print!("\r{data:08b}");
+        std::io::stdout().flush().unwrap();
     }
 }

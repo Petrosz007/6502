@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, thread, time::Duration};
 
 use devices::{ram::RAM, rom::ROM};
 
@@ -9,7 +9,8 @@ mod cpu;
 mod devices;
 
 fn main() {
-    let program = fs::read("programs/target/blink.rom").expect("The file should be read correctly");
+    let program =
+        fs::read("programs/target/rotate.rom").expect("The file should be read correctly");
 
     let rom = ROM::from_raw_vec(program);
     let ram = RAM::new();
@@ -38,5 +39,6 @@ fn main() {
     // }
     loop {
         cpu.fetch_and_execute_instruction();
+        // thread::sleep(Duration::from_millis(100));
     }
 }

@@ -1,3 +1,4 @@
+use super::StatusFlag::*;
 use crate::cpu::CPU;
 
 impl CPU {
@@ -10,6 +11,19 @@ impl CPU {
     pub(super) fn op_a9(&mut self) {
         self.a = self.get_immediate();
         self.pc += 2;
+        self.cycles += 2;
+    }
+
+    // ROR, Accumulator
+    pub(super) fn op_6a(&mut self) {
+        let new_a = (self.a >> 1) | (self.get_status_flag(CarryFlag) << 7);
+
+        self.set_status_flag(CarryFlag, self.a & 0b1);
+        self.set_status_flag(ZeroFlag, new_a & 0b0);
+        self.set_status_flag(NegativeFlag, new_a >> 7);
+
+        self.a = new_a;
+        self.pc += 1;
         self.cycles += 2;
     }
 
