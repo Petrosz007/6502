@@ -1,6 +1,6 @@
 use std::{fs, thread, time::Duration};
 
-use devices::{ram::RAM, rom::ROM};
+use devices::{console::Console, ram::RAM, rom::ROM};
 
 use crate::{bus::BenEaterBus, cpu::CPU};
 
@@ -10,11 +10,12 @@ mod devices;
 
 fn main() {
     let program =
-        fs::read("programs/target/rotate.rom").expect("The file should be read correctly");
+        fs::read("programs/target/hello_world.rom").expect("The file should be read correctly");
 
-    let rom = ROM::from_raw_vec(program);
     let ram = RAM::new();
-    let bus = BenEaterBus::new(rom, ram);
+    let console = Console::new();
+    let rom = ROM::from_raw_vec(program);
+    let bus = BenEaterBus::new(ram, console, rom);
 
     let mut cpu = CPU::new(Box::new(bus));
 
@@ -39,6 +40,6 @@ fn main() {
     // }
     loop {
         cpu.fetch_and_execute_instruction();
-        // thread::sleep(Duration::from_millis(100));
+        thread::sleep(Duration::from_millis(50));
     }
 }

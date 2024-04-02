@@ -1,3 +1,4 @@
+pub mod console;
 pub mod ram;
 pub mod rom;
 

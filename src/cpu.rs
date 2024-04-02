@@ -90,8 +90,12 @@ impl CPU {
             0x4C => self.op_4c(),
             0x6A => self.op_6a(),
             0x8D => self.op_8d(),
+            0xA2 => self.op_a2(),
             0xA9 => self.op_a9(),
+            0xBD => self.op_bd(),
+            0xE8 => self.op_e8(),
             0xEA => self.op_ea(),
+            0xF0 => self.op_f0(),
             unknown_opcode => panic!(
                 "Unknown op code encountered '{unknown_opcode:x}' at memory location {:x}",
                 self.pc
@@ -100,7 +104,7 @@ impl CPU {
     }
 
     fn get_status_flag(&mut self, flag: StatusFlag) -> u8 {
-        self.status & (1 << flag as u8)
+        (self.status & (1 << flag as u8)) >> flag as u8
     }
 
     /// The value must be 0 or 1
@@ -118,5 +122,15 @@ impl CPU {
 
     fn get_absolute(&mut self) -> u16 {
         self.bus.read(self.pc + 1) as u16 | ((self.bus.read(self.pc + 2) as u16) << 8)
+    }
+
+    fn get_absolute_x(&mut self) -> u8 {
+        let absolute_address = self.get_absolute();
+        self.bus.read(absolute_address + self.x as u16)
+    }
+
+    /// We have to handle this number as a signed integer, so i8, because the relative offset can be -128 to +127
+    fn get_relative(&mut self) -> i8 {
+        self.bus.read(self.pc + 1) as i8
     }
 }
